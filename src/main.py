@@ -11,7 +11,7 @@ class MyExport(sly.app.Export):
         sly_project = f.download_project(g.api, project, g.app_data, context.dataset_id)
         meta = sly_project.meta
 
-        bag_dir = Path(g.app_data).joinpath("bags")
+        bag_dir = Path(g.app_data).joinpath(f"{project.id}_{project.name}_rosbag")
         bag_dir.mkdir(exist_ok=True)
         for dataset_fs in sly_project.datasets:
             items_points = []
