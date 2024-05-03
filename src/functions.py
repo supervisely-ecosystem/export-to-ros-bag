@@ -23,7 +23,12 @@ def download_project(
     if not local_path.exists():
         local_path.mkdir(parents=True, exist_ok=True)
     local_path = local_path.as_posix()
-    dataset_ids = [dataset_id] if dataset_id is not None else None
+    if dataset_id is not None:
+        dataset_ids = [dataset_id]
+        nested_datasets = api.dataset.get_list(project.id, parent_id=dataset_id)
+        dataset_ids.extend([d.id for d in nested_datasets])
+    else:
+        dataset_ids = None
 
     sly.fs.mkdir(local_path, remove_content_if_exists=True)
     if project.type == str(sly.ProjectType.POINT_CLOUDS):
