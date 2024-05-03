@@ -4,10 +4,14 @@
   "version": "2.0.0",
   "categories": ["pointclouds", "export"],
   "context_menu": {
-    "target": ["point_cloud_episodes_project", "point_cloud_project"],
+    "target": [
+      "point_cloud_project",
+      "point_cloud_dataset",
+      "point_cloud_episodes_project",
+      "point_cloud_episodes_dataset"
+    ],
     "context_root": "Download as"
   },
-  "system": true,
   "description": "Export Pointclouds and Pointcloud episodes to ROS Bag format",
   "docker_image": "supervisely/import-export:6.73.64",
   "main_script": "src/main.py",
