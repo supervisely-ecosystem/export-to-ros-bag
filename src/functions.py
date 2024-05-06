@@ -4,13 +4,30 @@ from pathlib import Path
 
 import numpy as np
 import rosbag
-
 import rospy
 import sensor_msgs.point_cloud2 as pc2
 from std_msgs.msg import Header
+from tqdm import tqdm
+
 import src.globals as g
 import supervisely as sly
 from supervisely.geometry.cuboid_3d import Cuboid3d
+
+
+def get_progress(
+    total: int,
+    message: str = "Processing...",
+    is_size: bool = False,
+) -> tuple:
+    if sly.is_production():
+        progress = sly.Progress(message, total, is_size=is_size)
+        progress_cb = progress.iters_done_report
+    else:
+        progress = tqdm(
+            total=total, desc=message, unit="B" if is_size else "it", unit_scale=is_size
+        )
+        progress_cb = progress.update
+    return progress, progress_cb
 
 
 def download_project(
@@ -33,12 +50,22 @@ def download_project(
     sly.fs.mkdir(local_path, remove_content_if_exists=True)
     if project.type == str(sly.ProjectType.POINT_CLOUDS):
         sly.download_pointcloud_project(
-            api, project.id, local_path, download_pointclouds_info=True, dataset_ids=dataset_ids
+            api,
+            project.id,
+            local_path,
+            download_pointclouds_info=True,
+            dataset_ids=dataset_ids,
+            log_progress=True,
         )
         sly_project = sly.PointcloudProject(local_path, sly.OpenMode.READ)
     elif project.type == str(sly.ProjectType.POINT_CLOUD_EPISODES):
         sly.download_pointcloud_episode_project(
-            api, project.id, local_path, download_pointclouds_info=True, dataset_ids=dataset_ids
+            api,
+            project.id,
+            local_path,
+            download_pointclouds_info=True,
+            dataset_ids=dataset_ids,
+            log_progress=True,
         )
         sly_project = sly.PointcloudEpisodeProject(local_path, sly.OpenMode.READ)
     else:
@@ -60,6 +87,7 @@ def get_rostime(pcd_name: str = None):
     nsecs = int((float_secs - secs) * 1000000000)
     return rospy.rostime.Time(secs, nsecs)
 
+
 def process_pcd_figure(all_coords: list, fig: sly.PointcloudFigure):
     if fig.geometry.geometry_name() == Cuboid3d.geometry_name():
         cuboid = fig.geometry
@@ -70,7 +98,6 @@ def process_pcd_figure(all_coords: list, fig: sly.PointcloudFigure):
         all_coords.append(center)
         all_coords.append(size)
         all_coords.append(rotation)
-
 
 
 def handle_exception(exc: Exception, api: sly.Api, task_id: int):
@@ -92,10 +119,14 @@ def handle_exception(exc: Exception, api: sly.Api, task_id: int):
 
 def write_bag(bag_dir: Path, dataset_fs: sly.Dataset, items_points: list):
     bag_path = bag_dir.joinpath(f"{dataset_fs.name}.bag")
+    progress, progress_cb = get_progress(len(items_points), f"Writing rosbag {bag_path.name}...")
     with rosbag.Bag(bag_path, "w") as bag:
         for pcd_points, ann_points, rostime in items_points:
             bag.write("PointCloud2", pcd_points, t=rostime)
             bag.write("SlyAnnotations", ann_points, t=rostime)
+            progress_cb(1)
+        if sly.is_development():
+            progress.close()
 
 
 def process_dataset(
@@ -105,10 +136,11 @@ def process_dataset(
     items_points: list,
 ):
     items_names = dataset_fs.get_items_names()
+    progress, progress_cb = get_progress(
+        len(items_names), f"Processing dataset {dataset_fs.name}..."
+    )
     if project.type == str(sly.ProjectType.POINT_CLOUD_EPISODES):
-        ann = sly.PointcloudEpisodeAnnotation.load_json_file(
-            dataset_fs.get_ann_path(), meta
-        )
+        ann = sly.PointcloudEpisodeAnnotation.load_json_file(dataset_fs.get_ann_path(), meta)
     for item_name in items_names:
         pcd_path = dataset_fs.get_item_path(item_name)
         if project.type == str(sly.ProjectType.POINT_CLOUDS):
@@ -144,3 +176,6 @@ def process_dataset(
         pcd_points = pc2.create_cloud_xyz32(header, pcd_points)
         ann_points = pc2.create_cloud_xyz32(header, label_coords)
         items_points.append((pcd_points, ann_points, rostime))
+        progress_cb(1)
+    if sly.is_development():
+        progress.close()
