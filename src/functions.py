@@ -4,10 +4,10 @@ from pathlib import Path
 
 import numpy as np
 import rosbag
+
 import rospy
 import sensor_msgs.point_cloud2 as pc2
 from std_msgs.msg import Header
-
 import src.globals as g
 import supervisely as sly
 from supervisely.geometry.cuboid_3d import Cuboid3d
@@ -60,44 +60,17 @@ def get_rostime(pcd_name: str = None):
     nsecs = int((float_secs - secs) * 1000000000)
     return rospy.rostime.Time(secs, nsecs)
 
-
-def process_pcd_figure(fig: sly.PointcloudFigure):
-    label_points = []
+def process_pcd_figure(all_coords: list, fig: sly.PointcloudFigure):
     if fig.geometry.geometry_name() == Cuboid3d.geometry_name():
         cuboid = fig.geometry
-        bbox_center = np.array([cuboid.position.x, cuboid.position.y, cuboid.position.z])
-        bbox_size = np.array([cuboid.dimensions.x, cuboid.dimensions.y, cuboid.dimensions.z])
-        bbox_rotation = [cuboid.rotation.x, cuboid.rotation.y, cuboid.rotation.z]
+        center = np.array([cuboid.position.x, cuboid.position.y, cuboid.position.z])
+        size = np.array([cuboid.dimensions.x, cuboid.dimensions.y, cuboid.dimensions.z])
+        rotation = np.array([cuboid.rotation.x, cuboid.rotation.y, cuboid.rotation.z])
 
-        half_dimensions = bbox_size / 2
+        all_coords.append(center)
+        all_coords.append(size)
+        all_coords.append(rotation)
 
-        # Create a rotation matrix based on the rotation angles
-        rotation_matrix = np.array(
-            [
-                [np.cos(bbox_rotation[2]), -np.sin(bbox_rotation[2]), 0],
-                [np.sin(bbox_rotation[2]), np.cos(bbox_rotation[2]), 0],
-                [0, 0, 1],
-            ]
-        )
-        # Calculate the 8 corner points of the cuboid
-        corner_points = []
-        for i in [-1, 1]:
-            for j in [-1, 1]:
-                for k in [-1, 1]:
-                    corner_point = (
-                        bbox_center
-                        + i * rotation_matrix.dot([half_dimensions[0], 0, 0])
-                        + j * rotation_matrix.dot([0, half_dimensions[1], 0])
-                        + k * rotation_matrix.dot([0, 0, half_dimensions[2]])
-                    )
-                    corner_points.append(corner_point)
-        label_points.extend(corner_points)
-
-        edge_points = []
-
-        label_points.extend(edge_points)
-    label_points = np.array(label_points)
-    return label_points
 
 
 def handle_exception(exc: Exception, api: sly.Api, task_id: int):
@@ -146,18 +119,19 @@ def process_dataset(
         pcd_meta = pcd_info.get("meta", {})
 
         # read annotation
-        label_points = []
+        label_coords = []
         if project.type == str(sly.ProjectType.POINT_CLOUDS):
             ann = sly.PointcloudAnnotation.load_json_file(ann_path, meta)
             for label in ann.figures:
                 label: sly.PointcloudFigure
-                label_points.extend(process_pcd_figure(label))
+                process_pcd_figure(label_coords, label)
         else:
             frame_index = pcd_meta.get("frame", 0)
             figures = ann.get_figures_on_frame(frame_index)
             for fig in figures:
-                label_points.extend(process_pcd_figure(fig))
+                process_pcd_figure(label_coords, fig)
 
+        label_coords = np.array(label_coords, dtype=np.float32)
         # read point cloud
         pcd_points = sly.pointcloud.read(pcd_path)  # np.array
 
@@ -168,5 +142,5 @@ def process_dataset(
         header.frame_id = pcd_meta.get("frame_id", "os1_lidar")
 
         pcd_points = pc2.create_cloud_xyz32(header, pcd_points)
-        ann_points = pc2.create_cloud_xyz32(header, label_points)
+        ann_points = pc2.create_cloud_xyz32(header, label_coords)
         items_points.append((pcd_points, ann_points, rostime))
