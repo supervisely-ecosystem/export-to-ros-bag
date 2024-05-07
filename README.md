@@ -1,6 +1,6 @@
 <div align="center" markdown>
 
-<!-- <img align="center" src="" width="250"> -->
+<img align="center" src="https://github.com/supervisely-ecosystem/export-to-ros-bag/releases/download/v0.0.1/export_ros_poster.png" width="250">
 
 # Export to ROS Bag
 
