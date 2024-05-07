@@ -19,10 +19,11 @@ The application preserves annotations (3D Cuboid geometry only).
 
 ### Key Features
 
-- Export Supervisely projects or dataset (pointclouds or pointcloud episodes) to ROS bag files
+- Export Supervisely pointcloud or pointcloud episodes projects/datasets as ROS bag files
 - Pointclouds `.pcd` will be saved as `/PointCloud2` topic
 - Annotations will be saved as `/SlyAnnotations` topic
-- Backward compatibility with importing the same bag file into Supervisely
+- 2 options for exporting annotations: `geometry_msgs/Vector3Stamped` (allows to import as annotations back to Supervisely) and `sensor_msgs/PointCloud2` (will be transformed to point clouds, can be merged with original point clouds in the new ROS bag file)
+- Backward compatibility with importing the same bag file into Supervisely (demo video below)
 
 ## Need Help?
 
@@ -45,6 +46,18 @@ Option 2: Project/Dataset context menu:
 2. Right-click on the project or dataset and choose `Download as` -> `Export to ROS Bag`
 
 3. Press `Run` button in the modal window
+
+## Export demo
+
+<video preload="auto" autoplay muted loop>
+    <source src="https://github.com/supervisely-ecosystem/export-to-ros-bag/releases/download/v0.0.1/export.mp4" type="video/mp4">
+</video>
+
+## Import demo
+
+<video preload="auto" autoplay muted loop>
+    <source src="https://github.com/supervisely-ecosystem/export-to-ros-bag/releases/download/v0.0.1/import.mp4" type="video/mp4">
+</video>
 
 ## Output
 
