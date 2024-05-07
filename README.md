@@ -49,13 +49,13 @@ Option 2: Project/Dataset context menu:
 
 ## Export demo
 
-<video preload="auto" autoplay muted loop>
+<video width="100%" preload="auto" autoplay muted loop>
     <source src="https://github.com/supervisely-ecosystem/export-to-ros-bag/releases/download/v0.0.1/export.mp4" type="video/mp4">
 </video>
 
 ## Import demo
 
-<video preload="auto" autoplay muted loop>
+<video width="100%" preload="auto" autoplay muted loop>
     <source src="https://github.com/supervisely-ecosystem/export-to-ros-bag/releases/download/v0.0.1/import.mp4" type="video/mp4">
 </video>
 
