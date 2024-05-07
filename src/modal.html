@@ -1,0 +1,25 @@
+<div>
+    <sly-field title="Choose format to save annotations">
+        <sly-icon slot="icon" :options="{ color: '#4977ff', bgColor: '#ddf2ff', rounded: false }">
+            <i class="zmdi zmdi-view-comfy"></i>
+        </sly-icon>
+        If you have annotations in your project/dataset, you can specify whether to transform all annotations in Pointcloud2 object or preserve coordinates (center XYZ, roll-pitch-yaw rotation, and WHL sizes) in the output message for further importing them to Supervisely as annotations.
+    </sly-field>
+
+        <div class="fflex" style="flex-direction: column; align-items: start; margin: 20px" >
+            <el-radio-group v-model="state.annMode">
+                <el-radio style="margin: 5px" label="sly">Preserve annotations to be able to import them back to Supervisely</el-radio>
+                <el-radio style="margin: 5px" label="cloud">Transform all annotations to pointclouds</el-radio>
+            </el-radio-group>
+        </div>
+        
+        <div class="fflex" style="flex-direction: column; align-items: start; font-weight: 500; font-size: 14px; margin: 20px" v-if="state.annMode === 'cloud'">
+          <el-checkbox v-model="state.mergeMode" style="margin: 5px">
+              <b style="padding: 5px">Merge all objects with pointclouds into one message</b>
+          </el-checkbox>
+          <el-checkbox v-model="state.fillPoints" style="margin: 5px">
+              <b style="padding: 5px;">Fill Cuboid3D object edges with points to make them more visible %</b>
+          </el-checkbox>
+          <el-input-number class="mr10"  style="margin-left: 35px" v-model="state.fillRate" :min="1" :max="100" size="small"></el-input-number> 
+        </div>
+</div>
