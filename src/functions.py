@@ -191,7 +191,7 @@ def write_bag(bag_dir: Path, dataset_fs: sly.Dataset, items_points: list):
                     for msg in ann:
                         bag.write("SlyAnnotations", msg, t=msg.header.stamp)
                 else:
-                    bag.write("SlYAnnotations", ann, t=rostime)
+                    bag.write("SlyAnnotations", ann, t=rostime)
 
             progress_cb(1)
         if sly.is_development():
