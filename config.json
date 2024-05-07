@@ -19,6 +19,7 @@
     "fillPoints": true,
     "fillRate": "50"
   },
+  "modal_width": 700,
   "description": "Export Pointclouds and Pointcloud episodes to ROS Bag format",
   "docker_image": "supervisely/import-export:6.73.64",
   "main_script": "src/main.py",

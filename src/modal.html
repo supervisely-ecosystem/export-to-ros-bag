@@ -1,12 +1,12 @@
 <div>
-    <sly-field title="All pointclouds will be saved in `Pointcloud2` topic (sensor_msgs/PointCloud2 ROS message type)">
+    <sly-field title="Pointcloud data: `Pointcloud2` topic (sensor_msgs/PointCloud2)">
         <sly-icon slot="icon" :options="{ color: '#4977ff', bgColor: '#ddf2ff', rounded: false }">
             <i class="zmdi zmdi-view-comfy"></i>
         </sly-icon> 
     </sly-field>
-    <sly-field title="Annotations will be saved in `SlyAnnotations` topic (select message type below)">
+    <sly-field title="Annotations: `SlyAnnotations` topic (select message type below)">
         <sly-icon slot="icon" :options="{ color: '#4977ff', bgColor: '#ddf2ff', rounded: false }">
-            <i class="zmdi zmdi-view-comfy"></i>
+            <i class="zmdi zmdi-select-all"></i>
         </sly-icon>
  
     </sly-field>
@@ -14,8 +14,8 @@
 
         <div class="fflex" style="flex-direction: column; align-items: start; margin: 5px 35px" >
             <el-radio-group v-model="state.annMode">
-                <el-radio style="margin: 5px" label="sly"><code><strong>geometry_msgs/Vector3Stamped</strong></code> message type – allow to import annotations back to Supervisely</el-radio>
-                <el-radio style="margin: 5px" label="cloud"><code><strong>sensor_msgs/PointCloud2</strong></code> message type – transform all annotations to Pointcloud2 message</el-radio>
+                <el-radio style="margin: 5px" label="sly"><code><strong>geometry_msgs/Vector3Stamped</strong></code> – allow to import annotations back to Supervisely</el-radio>
+                <el-radio style="margin: 5px" label="cloud"><code><strong>sensor_msgs/PointCloud2</strong></code> – transform all annotations to Pointcloud2 message</el-radio>
             </el-radio-group>
         </div>
         
