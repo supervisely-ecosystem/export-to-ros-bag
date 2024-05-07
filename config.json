@@ -12,6 +12,13 @@
     ],
     "context_root": "Download as"
   },
+  "modal_template": "src/modal.html",
+  "modal_template_state": {
+    "annMode": "sly",
+    "mergeMode": false,
+    "fillPoints": true,
+    "fillRate": "50"
+  },
   "description": "Export Pointclouds and Pointcloud episodes to ROS Bag format",
   "docker_image": "supervisely/import-export:6.73.64",
   "main_script": "src/main.py",
