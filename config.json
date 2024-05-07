@@ -25,5 +25,7 @@
   "main_script": "src/main.py",
   "task_location": "workspace_tasks",
   "headless": true,
-  "icon_cover": true
+  "icon_cover": true,
+  "icon": "https://github.com/supervisely-ecosystem/export-to-ros-bag/releases/download/v0.0.1/export_ros_logo.png",
+  "poster": "https://github.com/supervisely-ecosystem/export-to-ros-bag/releases/download/v0.0.1/export_ros_poster.png"
 }
