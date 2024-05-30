@@ -235,7 +235,8 @@ def process_dataset(
                 else:
                     get_points_from_cuboid(label_coords, label.geometry)
         else:
-            frame_index = pcd_meta.get("frame", 0)
+            # frame_index = pcd_meta.get("frame", 0) # return wrong idx if remove some frame from the dataset
+            frame_index = dataset_fs.get_frame_idx(item_name)
             figures = ann.get_figures_on_frame(frame_index)
             for fig in figures:
                 if g.sly_ann_mode:
