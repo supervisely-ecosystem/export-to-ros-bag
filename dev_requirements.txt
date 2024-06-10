@@ -1,2 +1,2 @@
 bagpy==0.5
-supervisely==6.73.78
+supervisely==6.73.101
