@@ -1,6 +1,7 @@
 import re
 import time
 from pathlib import Path
+from typing import Union
 
 import numpy as np
 import rosbag
@@ -200,7 +201,7 @@ def write_bag(bag_dir: Path, dataset_fs: sly.Dataset, items_points: list):
 
 def process_dataset(
     project: sly.Project,
-    dataset_fs: sly.Dataset,
+    dataset_fs: Union[sly.PointcloudEpisodeDataset, sly.PointcloudEpisodeDataset],
     meta: sly.ProjectMeta,
     items_points: list,
 ):
@@ -235,7 +236,7 @@ def process_dataset(
                 else:
                     get_points_from_cuboid(label_coords, label.geometry)
         else:
-            frame_index = pcd_meta.get("frame", 0)
+            frame_index = dataset_fs.get_frame_idx(item_name)
             figures = ann.get_figures_on_frame(frame_index)
             for fig in figures:
                 if g.sly_ann_mode:
@@ -246,7 +247,8 @@ def process_dataset(
                 else:
                     get_points_from_cuboid(label_coords, fig.geometry)
 
-        label_coords = np.array(label_coords, dtype=np.float32)
+        if len(label_coords) > 0:
+            label_coords = np.array(label_coords, dtype=np.float32)
         # read point cloud
         pcd_points = sly.pointcloud.read(pcd_path)  # np.array
 
@@ -256,7 +258,8 @@ def process_dataset(
         header.frame_id = pcd_meta.get("frame_id", "os1_lidar")
 
         if g.merge_mode:
-            pcd_points = np.concatenate((pcd_points, label_coords), axis=0)
+            if len(label_coords) > 0:
+                pcd_points = np.concatenate((pcd_points, label_coords), axis=0)
             ann_points = None
         else:
             ann_points = pc2.create_cloud_xyz32(
