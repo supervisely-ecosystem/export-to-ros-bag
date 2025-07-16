@@ -7,13 +7,13 @@ import numpy as np
 import rosbag
 import rospy
 import sensor_msgs.point_cloud2 as pc2
+import supervisely as sly
 from geometry_msgs.msg import Vector3, Vector3Stamped
 from std_msgs.msg import Header
+from supervisely.geometry.cuboid_3d import Cuboid3d
 from tqdm import tqdm
 
 import src.globals as g
-import supervisely as sly
-from supervisely.geometry.cuboid_3d import Cuboid3d
 
 
 def get_progress(
@@ -91,6 +91,10 @@ def get_rostime(pcd_name: str = None, increment: int = 0):
 
 
 def get_points_from_cuboid(all_coords: list, cuboid: Cuboid3d):
+    if not isinstance(cuboid, Cuboid3d):
+        sly.logger.warning("Expected Cuboid3d geometry, got: {}".format(type(cuboid)))
+        return
+
     bbox_center = np.array([cuboid.position.x, cuboid.position.y, cuboid.position.z])
     bbox_size = np.array([cuboid.dimensions.x, cuboid.dimensions.y, cuboid.dimensions.z])
     bbox_rotation = [cuboid.rotation.x, cuboid.rotation.y, cuboid.rotation.z]
