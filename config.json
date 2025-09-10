@@ -2,6 +2,7 @@
   "name": "Export Point Clouds to ROS Bag",
   "type": "app",
   "version": "2.0.0",
+  "instance_version": "6.9.22",
   "categories": ["pointclouds", "export"],
   "context_menu": {
     "target": [
