@@ -234,6 +234,10 @@ def process_dataset(
             for label in ann.figures:
                 if g.sly_ann_mode:
                     # process_pcd_figure_to_cloud(label_coords, label) # NOTE: temporary commented out
+                    res = process_pcd_figure_to_vector(label, rostime, i)
+                    if not res:
+                        sly.logger.debug(f"Skipping unsupported geometry: {label.geometry}")
+                        continue
                     msg_1, msg_2, msg_3 = process_pcd_figure_to_vector(label, rostime, i)
                     vector_msgs.extend([msg_1, msg_2, msg_3])
                     i += 3
@@ -245,6 +249,10 @@ def process_dataset(
             for fig in figures:
                 if g.sly_ann_mode:
                     #     process_pcd_figure_to_cloud(label_coords, fig) # NOTE: temporary commented out
+                    res = process_pcd_figure_to_vector(fig, rostime, i)
+                    if not res:
+                        sly.logger.debug(f"Skipping unsupported geometry: {fig.geometry}")
+                        continue
                     msg_1, msg_2, msg_3 = process_pcd_figure_to_vector(fig, rostime, i)
                     vector_msgs.extend([msg_1, msg_2, msg_3])
                     i += 3
