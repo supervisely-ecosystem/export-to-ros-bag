@@ -4,7 +4,7 @@
 
 # Export to ROS Bag
 
-[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](https://ecosystem.supervise.ly/apps/supervisely-ecosystem/export-to-ros-bag)
+[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](../../../../supervisely-ecosystem/export-to-ros-bag)
 [![](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://supervise.ly/slack)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/supervisely-ecosystem/export-to-ros-bag)
 [![views](https://app.supervise.ly/img/badges/views/supervisely-ecosystem/export-to-ros-bag.png)](https://supervise.ly)
