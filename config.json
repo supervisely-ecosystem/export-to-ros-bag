@@ -2,7 +2,7 @@
   "name": "Export Point Clouds to ROS Bag",
   "type": "app",
   "version": "2.0.0",
-  "instance_version": "6.9.22",
+  "instance_version": "6.15.2",
   "categories": ["pointclouds", "export"],
   "context_menu": {
     "target": [
@@ -22,7 +22,7 @@
   },
   "modal_width": 700,
   "description": "Export Pointclouds and Pointcloud episodes to ROS Bag format",
-  "docker_image": "supervisely/import-export:6.73.101",
+  "docker_image": "supervisely/import-export:6.73.456",
   "main_script": "src/main.py",
   "task_location": "workspace_tasks",
   "headless": true,
